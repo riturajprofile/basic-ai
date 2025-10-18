@@ -32,12 +32,14 @@ ENV PYTHONUNBUFFERED=1 \
 # Copy only the installed packages from builder
 COPY --from=builder /root/.local /root/.local
 
-# Copy only necessary application files
-COPY ai.py main.py ./
+# Copy startup script and application files
+COPY start.sh ai.py main.py ./
+
+# Make startup script executable
+RUN chmod +x start.sh
 
 # Expose port for FastAPI
 EXPOSE 8000
 
-# Run the FastAPI application with uvicorn
-# Use shell form to allow environment variable expansion
-CMD ["sh", "-c", "uvicorn main:app --host 0.0.0.0 --port ${PORT:-8000}"]
+# Run the startup script
+CMD ["./start.sh"]
